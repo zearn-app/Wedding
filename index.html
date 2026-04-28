@@ -25,6 +25,7 @@ body {
   z-index: 10;
   flex-direction: column;
   cursor: pointer;
+  animation: fadeIn 1s ease;
 }
 
 #intro h1 {
@@ -62,12 +63,32 @@ body {
 .section {
   text-align: center;
   padding: 60px 20px;
-  animation: fadeUp 1s ease;
+  opacity: 0;
+  transform: translateY(50px);
+  transition: all 1s ease;
 }
 
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(40px);}
-  to { opacity: 1; transform: translateY(0);}
+.section.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Text animation */
+.section h1, .section h2, .section p {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: textFade 1s ease forwards;
+}
+
+.section.show h1 { animation-delay: 0.2s; }
+.section.show h2 { animation-delay: 0.3s; }
+.section.show p  { animation-delay: 0.4s; }
+
+@keyframes textFade {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* Countdown */
@@ -83,6 +104,11 @@ body {
   border-radius: 10px;
   min-width: 60px;
   font-weight: bold;
+  transition: transform 0.3s;
+}
+
+.box:hover {
+  transform: scale(1.1);
 }
 
 /* Gallery */
@@ -95,6 +121,18 @@ body {
 .gallery img {
   width: 100%;
   border-radius: 15px;
+  transform: scale(0.9);
+  opacity: 0;
+  transition: all 0.8s ease;
+}
+
+.gallery img.show {
+  transform: scale(1);
+  opacity: 1;
+}
+
+.gallery img:hover {
+  transform: scale(1.05);
 }
 
 /* Button */
@@ -103,6 +141,12 @@ button {
   background: none;
   font-size: 18px;
   cursor: pointer;
+}
+
+/* Fade in */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 </style>
 </head>
@@ -232,6 +276,26 @@ function updateCountdown() {
 }
 
 setInterval(updateCountdown, 1000);
+
+// Scroll animation trigger
+const sections = document.querySelectorAll(".section");
+const images = document.querySelectorAll(".gallery img");
+
+window.addEventListener("scroll", () => {
+  sections.forEach(sec => {
+    const top = sec.getBoundingClientRect().top;
+    if (top < window.innerHeight - 100) {
+      sec.classList.add("show");
+    }
+  });
+
+  images.forEach(img => {
+    const top = img.getBoundingClientRect().top;
+    if (top < window.innerHeight - 50) {
+      img.classList.add("show");
+    }
+  });
+});
 
 // Music toggle
 let playing = false;
